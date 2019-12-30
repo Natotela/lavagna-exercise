@@ -11,18 +11,18 @@ services:
           context: ./
           dockerfile: Dockerfile.nginx
         ports:
-          - "8080:80"
+          - "80:80"
         depends_on: [api]
         # volumes_from: api
-        volumes:  
-          - WEBAPP:/webapp/static
+        # volumes:  
+          # - WEBAPP:/webapp/
         
 
     api:
         container_name: api
         build: .
-        volumes: 
-          - WEBAPP:/usr/src/app/src/main/webapp
+        # volumes: 
+          # - WEBAPP:/usr/src/app/src/main/webapp
         environment: 
           DB_HOST: "db"
           DB_DIALECT: "MYSQL"
@@ -52,7 +52,7 @@ services:
 
 volumes:
     DATA:
-    WEBAPP:
+    # WEBAPP:
 
 ################################################
 # things to fix/add:
