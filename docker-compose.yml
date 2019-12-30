@@ -1,13 +1,29 @@
 version: "2.1"
 services:
-    api:
-        build: .
-        container_name: api
+
+# (a) Create a custom nginx container to 
+# - Act as a reverse proxy from port 80 to the UN-EXPOSED application 8080
+# - Serve the static content (found in the webapp folder) DIRECTLY
+# (b) make it part of the compose
+    nginx:
+        container_name: nginx
+        build:
+          context: ./
+          dockerfile: Dockerfile.nginx
         ports:
-            - "8080:8080"
-        # tty: true
+          - "8080:80"
+        depends_on: [api]
+        # volumes_from: api
+        volumes:  
+          - WEBAPP:/webapp/static
+        
+
+    api:
+        container_name: api
+        build: .
+        volumes: 
+          - WEBAPP:/usr/src/app/src/main/webapp
         environment: 
-          # TERM: xterm-256color
           DB_HOST: "db"
           DB_DIALECT: "MYSQL"
           DB_URL: "jdbc:mysql://db:3306/lavagna"
@@ -36,7 +52,7 @@ services:
 
 volumes:
     DATA:
-
+    WEBAPP:
 
 ################################################
 # things to fix/add:
