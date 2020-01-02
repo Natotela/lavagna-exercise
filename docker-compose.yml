@@ -1,10 +1,6 @@
 version: "2.1"
 services:
 
-# (a) Create a custom nginx container to 
-# - Act as a reverse proxy from port 80 to the UN-EXPOSED application 8080
-# - Serve the static content (found in the webapp folder) DIRECTLY
-# (b) make it part of the compose
     nginx:
         container_name: nginx
         build:
@@ -14,21 +10,32 @@ services:
           - "80:80"
         depends_on: [api]
         # volumes_from: api
-        # volumes:  
-          # - WEBAPP:/webapp/
-        
+        volumes:  
+          - WEBAPP:/webapp/static
+
+    # doc:
+    #     # build:
+    #     #   context: ./
+    #     #   dockerfile: Dockerfile.doc
+    #     # entrypoint: ["sh", "entry_doc.sh"]
+    #     image: lavadocu
+    #     ports: 
+    #       - 8001:8001
 
     api:
         container_name: api
-        build: .
-        # volumes: 
-          # - WEBAPP:/usr/src/app/src/main/webapp
+        build:
+          context: .
+          dockerfile: Dockerfile_alpine
+        depends_on: [db]
+        volumes: 
+          - WEBAPP:/app/static
         environment: 
           DB_HOST: "db"
           DB_DIALECT: "MYSQL"
           DB_URL: "jdbc:mysql://db:3306/lavagna"
-          DB_USER: ${MYSQL_UN_PW}
-          DB_PASS: ${MYSQL_UN_PW}
+          DB_USER: root
+          DB_PASS: root
           SPRING_PROFILE: "dev"
         # depends_on:
         #     db:
@@ -41,9 +48,9 @@ services:
           - DATA:/var/lib/mysql
         environment:
             MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-            MYSQL_USER: ${MYSQL_UN_PW}
-            MYSQL_PASSWORD: ${MYSQL_UN_PW}
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: root
+            MYSQL_PASSWORD: root
             MYSQL_DATABASE: "lavagna"
         # healthcheck:
         #     test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
@@ -52,14 +59,17 @@ services:
 
 volumes:
     DATA:
-    # WEBAPP:
+    WEBAPP:
 
 ################################################
 # things to fix/add:
-# https://help.lavagna.io/02-install/02-01-install.html#mysql
+# MYSQL https://help.lavagna.io/02-install/02-01-install.html#mysql
   # SET IN MYSQLD configuration:
   # [mysqld]
   # --ft_min_word_len=3
   # --ft_stopword_file=''
-#
+# DOCUMENTATION:
+  # not getting anywhere in the server - find out independently how to GET to it.
+# NGINX
+  # - Serve the static content (found in the webapp folder) DIRECTLY
 ################################################

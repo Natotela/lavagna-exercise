@@ -1,0 +1,12 @@
+FROM maven:3.6.3-jdk-8
+
+# WORKDIR /usr/src/doc
+WORKDIR /documentation
+ADD pom.xml package.json package-lock.json LICENSE-GPLv3.txt ./
+COPY src .
+# COPY entry_doc.sh .
+# RUN chmod +x entry_doc.sh
+
+EXPOSE 8001
+RUN mvn clean stampo:build
+# ENTRYPOINT ["entry_doc.sh"]

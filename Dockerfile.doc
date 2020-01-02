@@ -1,0 +1,5 @@
+FROM lavdocs
+
+COPY entry_doc.sh .
+RUN chmod +x entry_doc.sh
+ENTRYPOINT ["./entry_doc.sh"]

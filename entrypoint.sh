@@ -1,6 +1,8 @@
 #!/bin/sh
-apt-get update && apt-get dist-upgrade
-apt-get install mysql-client
+# apt-get update && apt-get dist-upgrade
+# apt-get install mysql-client
+apk update
+apk add mysql-client
 
 sleep 2
 while ! mysqladmin ping -h"$DB_HOST" --silent; do
